@@ -36,9 +36,12 @@ copy(e::Expr) = (n = Expr(e.head);
                  n.typ = e.typ;
                  n)
 copy(s::Slot) = Slot(s.id, s.typ)
+copy(x::AssignNode) = AssignNode(astcopy(x.lhs), astcopy(x.rhs))
+copy(x::ReturnNode) = ReturnNode(astcopy(x.expr))
+copy(x::GotoIfNotNode) = GotoIfNotNode(astcopy(x.cond), x.label)
 
 # copy parts of an AST that the compiler mutates
-astcopy(x::Union{Slot,Expr}) = copy(x)
+astcopy(x::Union{Slot,Expr,AssignNode,ReturnNode,GotoIfNotNode}) = copy(x)
 astcopy(x::Array{Any,1}) = Any[astcopy(a) for a in x]
 astcopy(x) = x
 
